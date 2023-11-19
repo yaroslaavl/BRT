@@ -223,7 +223,7 @@ public:
         Node<T>* curr = root;
         while(curr){
             if (!curr->left){
-                cout << curr->data << (curr->red ? " (Red) " : " (Black) ");
+                cout << curr->data <<" ";
                 curr = curr->right;
             }
             else {
@@ -232,7 +232,7 @@ public:
                     pre = pre->right;
                 }
                 if (!pre->right){
-                    cout << curr->data << (curr->red ? " (Red) " : " (Black) ");
+                    cout << curr->data <<" ";
                     pre->right = curr;
                     curr = curr->left;
                 }
@@ -241,6 +241,24 @@ public:
                     curr = curr->right;
                 }
             }
+        }
+    }
+      void Print(Node<T>*start, string in = "",bool left = true){
+        if(start != nullptr){
+            cout<<in;
+            if(start->parent != nullptr) {
+                if (left) {
+                    cout << "L---";
+                    in += "   ";
+                } else {
+                    cout << "R---";
+                    in += "|   ";
+                }
+            }
+            string col  = start->red ? "[Red]" : "[Black]";
+            cout<< col <<start->data<<endl;
+            Print(start->left,in,true);
+            Print(start->right,in,false);
         }
     }
 };
@@ -263,8 +281,8 @@ int main() {
      tree.in();
      cout << endl;
 
-     tree.pre();
-     cout << endl;
+    cout<<"Print"<<endl;
+    tree.Print(tree.root);
 
      tree.seacrh(25);
      cout<< endl;
