@@ -90,28 +90,39 @@ public:
 
     void insertBRT(T value) {
         Node<T> *node = insertBST(value);
-        while (node != root) {
-            if (node!= nullptr && node->parent!= nullptr && node->red == true && node->parent->red == true) {
-                Node<T> *y = node->parent->parent;
-                if (y != nullptr) {
-                    if (y == nullptr || y->black == true) {
-                        Node<T> *grand = node->parent->parent;
-                        if (node == node->parent->left && node->parent == node->parent->parent->left) {
-                            rotationR(grand);
-                        } else if (node == node->parent->right && node->parent == node->parent->parent->right) {
-                            rotationL(grand);
-                        } else if (node == node->parent->left && node->parent == node->parent->parent->right) {
-                            rotationR(node->parent);
-                            rotationL(grand);
-                        } else if (node == node->parent->right && node->parent == node->parent->parent->left) {
-                            rotationL(node->parent);
-                            rotationR(grand);
-                        } else {
-                            node->parent->makeBlack();
-                            node->left->makeRed();
-                            node->right->makeRed();
+        node->makeRed();
+        while (node != root && node->parent->red) {
+            if (node->parent == node->parent->parent->left) {
+                Node<T> *y = node->parent->parent->right;
+                    if(y!= nullptr && y->red) {
+                        node->parent->makeBlack();
+                        y->makeBlack();
+                        node->parent->parent->makeRed();
+                        node = node->parent->parent;
+                    }else {
+                        if (node == node->parent->right) {
+                            node = node->parent;
+                            rotationL(node);
                         }
+                        node->parent->makeBlack();
+                        node->parent->parent->makeRed();
+                        rotationR(node->parent->parent);
                     }
+               }else{
+                Node<T> *y = node->parent->parent->left;
+                if(y!= nullptr && y->red) {
+                    node->parent->makeBlack();
+                    y->makeBlack();
+                    node->parent->parent->makeRed();
+                    node = node->parent->parent;
+                }else {
+                    if (node == node->parent->left) {
+                        node = node->parent;
+                        rotationR(node);
+                    }
+                    node->parent->makeBlack();
+                    node->parent->parent->makeRed();
+                    rotationL(node->parent->parent);
                 }
             }
         }
@@ -176,11 +187,11 @@ public:
         if (node->left != NULL) {
             left = HeightOfTree(node->left);
         }else
-            left = 0;
+            left = -1;
         if (node->right != NULL) {
             right = HeightOfTree(node->right);
         }else
-            right = 0;
+            right = -1;
         int max = left > right ? left : right;
         return max+1;
     }
@@ -212,7 +223,7 @@ public:
         Node<T>* curr = root;
         while(curr){
             if (!curr->left){
-                cout << curr->data << " ";
+                cout << curr->data << (curr->red ? " (Red) " : " (Black) ");
                 curr = curr->right;
             }
             else {
@@ -221,7 +232,7 @@ public:
                     pre = pre->right;
                 }
                 if (!pre->right){
-                    cout << curr->data << " ";
+                    cout << curr->data << (curr->red ? " (Red) " : " (Black) ");
                     pre->right = curr;
                     curr = curr->left;
                 }
@@ -256,6 +267,7 @@ int main() {
      cout << endl;
 
      tree.seacrh(25);
+     cout<< endl;
 
      int height = tree.HeightOfTree(tree.root);
      cout<<"Height: "<<height<<endl;
